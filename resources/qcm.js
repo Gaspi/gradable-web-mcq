@@ -1,7 +1,7 @@
 
 defaultQuestions = [
   "Calculez \\[ \\int_1^{+\\infty} \\frac{\\ln(x)}{x^2}\\text{d}x \\]",
-  "Calculez \\sum_{0 \\leq n \\leq +\\infty} \\frac{1}{n^{\\frac{3}{2}}} \\]",
+  "Calculez \\[ \\sum_{0 \\leq n \\leq +\\infty} \\frac{1}{n^{\\frac{3}{2}}} \\]",
 ]
 defaultAnswers = [
   "\\( 3.1415 / \\pi \\)",
@@ -18,17 +18,18 @@ function defaultQuestionBody() {
 
 function defaultQuestion() {
   return {
+      code: null,
       title: "Titre de question par défaut",
       body: defaultQuestionBody(),
       choices: [
         {
-          id: null,
-          name: "1",
+          code: null,
+          correct: false,
           body: defaultAnswer(),
         },
         {
-          id: null,
-          name: "2",
+          code: null,
+          correct: true,
           body: defaultAnswer(),
         },
       ]
@@ -37,97 +38,98 @@ function defaultQuestion() {
 
 function defaultSection() {
   return {
+      code: null,
       title: "Titre de section par défaut",
+      intro: "Texte d'introduction par défaut",
       questions: [ defaultQuestion() ]
     };
 }
 
+function defaultMCQ() {
+  return {
+    code: null,
+    title: "Mon nouveau QCM",
+    intro: "Ce QCM est à destination des L3",
+    sections: [ defaultSection() ],
+  }
+}
 
 var qcm_data = {};
 
-function buildTitle(elt) {
-  const header = elt.appendChild( build('h2') );
-  header.innerText = qcm_data.title;
-  return elt;
-}
 
-function buildOptions(elt) {
-  elt.innerText = JSON.stringify(qcm_data.options);
-  return elt;
-}
 
-function buildNewSection() {
+function buildBodyQuestion(question) {
   const card = buildCard();
-  const header = card.children[0].appendChild( build('h3') );
-  header.innerText = "Nouvelle section";
+  const body = card.children[0].appendChild( build('p', [], question.body) );
+  const question_admin = card.children[1].appendChild( build('form') );
+  // TODO
+  typeset(() => [body]);
   return card;
 }
 
-function buildSection(section) {
+function buildChoice(choice) {
   const card = buildCard();
-  const header = card.children[0].appendChild( build('h3') );
-  header.innerText = section.title;
-  card.children[1].appendChild( buildEditSection() );
-  section.questions.forEach( (q) => card.children[1].appendChild( buildQuestion(q) ) );
-  card.children[1].appendChild( buildNewQuestion() );
+  const header = card.children[0].appendChild( build('h5') );
+  header.innerText = (choice.correct ? '\u2705' : '\u274C') + choice.body;
+  const choice_admin = card.children[1].appendChild( build('form') );
+  // TODO
+  typeset(() => [header]);
   return card;
 }
 
 function buildQuestion(question) {
   const card = buildCard();
   card.children[0].appendChild( build('h5', [], question.title) );
-  const view = card.children[1].appendChild( build('div') );
-  refreshViewQuestion(question, view);
+  card.children[1].appendChild( buildBodyQuestion(question) );
+  question.choices.forEach( (c) => card.children[1].appendChild( buildChoice(c) ) );
+  return card;
+}
+
+// Construction du DOM d'intro / paramètrage de section
+function buildIntroSection(section) {
+  const card = buildCard();
+  if (section.intro) {
+    const intro = card.children[0].appendChild( build('p', [], section.intro) );
+    typeset(() => [intro]);
+  } else {
+    card.children[0].appendChild( build('h5', [], '[Administration]') );
+  }
+  const section_admin = card.children[1].appendChild( build('form') );
+  // TODO
   
-  card.children[1].appendChild( buildEditQuestion(question, view) );
-  question.choices.forEach( (c) => card.children[1].appendChild( buildEditChoice(c, view) ) );
-  card.children[1].appendChild( buildNewChoice(question, view) );
+  // Champ de titre
+  const title_input = build('input',['form-control']);
+  title_input.setAttribute('type','text');
+  title_input.innerText = section.title;
+  section_admin.appendChild( buildFormGroup(title_input, 'Titre') );
   
+  // Champ d'introduction
+  const intro_input = build('textarea',['form-control']);
+  intro_input.setAttribute('rows','3');
+  intro_input.innerText = section.intro;
+  section_admin.appendChild( buildFormGroup(intro_input, 'Introduction') );
+
+  //
   return card;
 }
 
-function refreshViewQuestion(question, view) {
-  removeAllChildren(view);
-  view.appendChild( build('p', [], question.body) );
-  view.appendChild( build('h5', [], "Choix :") );
-  const choices_list = view.appendChild( build('ul') );
-  question.choices.forEach(function(c) {
-	  const choice_li = choices_list.appendChild( build('li') );
-	  choice_li.innerText = c.name + ":" + c.body;
-	});
-  typeset(() => [view]);
-}
-
-function buildEditQuestion(question, view) {
+function buildSection(section) {
   const card = buildCard();
-  const header = card.children[0].appendChild( build('h5') );
-  header.innerText = "Editer la question";
+  card.children[0].appendChild( build('h3', [], section.title) );
+  card.children[1].appendChild( buildIntroSection(section) );
+  section.questions.forEach( (q) => card.children[1].appendChild( buildQuestion(q) ) );
+  card.children[0].onclick = function() {console.log('test'); };
   return card;
 }
 
-function buildEditSection(section) {
+function buildTitleQCM(data) {
   const card = buildCard();
-  card.children[0].appendChild( build('h5', [], "Editer la section") );
-  return card;
-}
-
-function buildNewQuestion(question) {
-  const card = buildCard();
-  card.children[0].appendChild( build('h5', [], "Ajouter une nouvelle question") );
-  return card;
-}
-
-function buildEditChoice(choice, view) {
-  const card = buildCard();
-  const header = card.children[0].appendChild( build('h5') );
-  header.innerText = "Editer réponse : " + choice.name;
-  return card;
-}
-
-function buildNewChoice(question, view) {
-  const card = buildCard();
-  const header = card.children[0].appendChild( build('h5') );
-  header.innerText = "Ajouter une nouvelle réponse";
+  card.children[0].appendChild( build('h2',[], data.title) );
+  if (data.intro) {
+    card.children[0].appendChild( build('p', [], data.intro) );
+  }
+  const qcm_admin = card.children[1].appendChild( build('form') );
+  // TODO
   return card;
 }
 
@@ -135,22 +137,14 @@ function buildQCMFromData(data) {
   if (!data) { return; }
   qcm_data = data;
   const page = emptyPage();
-  
   const main_div = build('div');
-  title_card = main_div.appendChild( buildCard(show=true) );
-  buildTitle(title_card.children[0]);
-  buildOptions(title_card.children[1]);
+  main_div.appendChild( buildTitleQCM(qcm_data) );
   qcm_data.sections.forEach( (s) => main_div.appendChild( buildSection(s) ) );
-  main_div.appendChild( buildNewSection() );
   page.appendChild(main_div);
 }
 
 function buildNewQCM() {
-  buildQCMFromData({
-    title: "Mon nouveau QCM",
-    options: {},
-    sections: [ defaultSection() ],
-  });
+  buildQCMFromData( defaultMCQ() );
 }
 
 function buildQCM(txt) {

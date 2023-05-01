@@ -19,6 +19,20 @@ function decipher(o) {
   }
 }
 
+var formGroupCount=0;
+function buildFormGroup(elt, label) {
+  if (!elt.id) {
+    elt.id = 'formGroup'+(++formGroupCount);
+  }
+  const lbl = build('label',[],label);
+  lbl.setAttribute('for', elt.id);
+  
+  const res = build('div',['form-group']);
+  res.appendChild(lbl);
+  res.appendChild(elt);
+  return res;
+}
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
@@ -45,6 +59,7 @@ function emptyPage() {
   return removeAllChildren(get('main-container'));
 }
 
+// Repalce with a class
 function buildCard(show=false) {
   const card = build('div', ['card','m-3']);
   const card_header = card.appendChild( build('div', ['card-header']) );
