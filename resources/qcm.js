@@ -1,8 +1,52 @@
 
+defaultQuestions = [
+  "Calculez \\[ \\int_1^{+\\infty} \\frac{\\ln(x)}{x^2}\\text{d}x \\]",
+  "Calculez \\sum_{0 \\leq n \\leq +\\infty} \\frac{1}{n^{\\frac{3}{2}}} \\]",
+]
+defaultAnswers = [
+  "\\( 3.1415 / \\pi \\)",
+  "\\( \\frac{\\sqrt{n}}{2\\pi} \\)",
+]
+
+function defaultAnswer() {
+  return defaultAnswers[getRandomInt(defaultAnswers.length)];
+}
+
+function defaultQuestionBody() {
+  return defaultQuestions[getRandomInt(defaultQuestions.length)];
+}
+
+function defaultQuestion() {
+  return {
+      title: "Titre de question par défaut",
+      body: defaultQuestionBody(),
+      choices: [
+        {
+          id: null,
+          name: "1",
+          body: defaultAnswer(),
+        },
+        {
+          id: null,
+          name: "2",
+          body: defaultAnswer(),
+        },
+      ]
+    };
+}
+
+function defaultSection() {
+  return {
+      title: "Titre de section par défaut",
+      questions: [ defaultQuestion() ]
+    };
+}
+
+
 var qcm_data = {};
 
 function buildTitle(elt) {
-  const header = elt.appendChild( build('h5') );
+  const header = elt.appendChild( build('h2') );
   header.innerText = qcm_data.title;
   return elt;
 }
@@ -12,41 +56,84 @@ function buildOptions(elt) {
   return elt;
 }
 
+function buildNewSection() {
+  const card = buildCard();
+  const header = card.children[0].appendChild( build('h3') );
+  header.innerText = "Nouvelle section";
+  return card;
+}
+
 function buildSection(section) {
   const card = buildCard();
-  const header = card.children[0].appendChild( build('h5') );
+  const header = card.children[0].appendChild( build('h3') );
   header.innerText = section.title;
-  const questions_hd = card.children[1].appendChild( build('h5') );
-  questions_hd.innerText = "Questions :";
+  card.children[1].appendChild( buildEditSection() );
   section.questions.forEach( (q) => card.children[1].appendChild( buildQuestion(q) ) );
+  card.children[1].appendChild( buildNewQuestion() );
   return card;
 }
 
 function buildQuestion(question) {
   const card = buildCard();
-  const header = card.children[0].appendChild( build('h5') );
-  header.innerText = question.title;
+  card.children[0].appendChild( build('h5', [], question.title) );
+  const view = card.children[1].appendChild( build('div') );
+  refreshViewQuestion(question, view);
   
-  const body = card.children[1].appendChild( build('p') );
-  body.innerText = `
-    When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
-  \[x = {-b \pm \sqrt{b^2-4ac} \over 2a}.\]`+question.body;
+  card.children[1].appendChild( buildEditQuestion(question, view) );
+  question.choices.forEach( (c) => card.children[1].appendChild( buildEditChoice(c, view) ) );
+  card.children[1].appendChild( buildNewChoice(question, view) );
   
-  const choix_hd = card.children[1].appendChild( build('h5') );
-  choix_hd.innerText = "Choix :";
-  question.choices.forEach( (c) => card.children[1].appendChild( buildChoice(c) ) );
   return card;
 }
 
-function buildChoice(choice) {
+function refreshViewQuestion(question, view) {
+  removeAllChildren(view);
+  view.appendChild( build('p', [], question.body) );
+  view.appendChild( build('h5', [], "Choix :") );
+  const choices_list = view.appendChild( build('ul') );
+  question.choices.forEach(function(c) {
+	  const choice_li = choices_list.appendChild( build('li') );
+	  choice_li.innerText = c.name + ":" + c.body;
+	});
+  typeset(() => [view]);
+}
+
+function buildEditQuestion(question, view) {
   const card = buildCard();
   const header = card.children[0].appendChild( build('h5') );
-  header.innerText = "Choix :" + choice.name;
-  card.children[1].innerText = choice.body;
+  header.innerText = "Editer la question";
   return card;
 }
 
-function buildQCMFromData() {
+function buildEditSection(section) {
+  const card = buildCard();
+  card.children[0].appendChild( build('h5', [], "Editer la section") );
+  return card;
+}
+
+function buildNewQuestion(question) {
+  const card = buildCard();
+  card.children[0].appendChild( build('h5', [], "Ajouter une nouvelle question") );
+  return card;
+}
+
+function buildEditChoice(choice, view) {
+  const card = buildCard();
+  const header = card.children[0].appendChild( build('h5') );
+  header.innerText = "Editer réponse : " + choice.name;
+  return card;
+}
+
+function buildNewChoice(question, view) {
+  const card = buildCard();
+  const header = card.children[0].appendChild( build('h5') );
+  header.innerText = "Ajouter une nouvelle réponse";
+  return card;
+}
+
+function buildQCMFromData(data) {
+  if (!data) { return; }
+  qcm_data = data;
   const page = emptyPage();
   
   const main_div = build('div');
@@ -54,49 +141,20 @@ function buildQCMFromData() {
   buildTitle(title_card.children[0]);
   buildOptions(title_card.children[1]);
   qcm_data.sections.forEach( (s) => main_div.appendChild( buildSection(s) ) );
-  
+  main_div.appendChild( buildNewSection() );
   page.appendChild(main_div);
 }
 
 function buildNewQCM() {
-  qcm_data = {
+  buildQCMFromData({
     title: "Mon nouveau QCM",
     options: {},
-    sections: [
-      {
-        title: "Ma nouvelle section",
-        questions: [
-          {
-            title: "Ma nouvelle question",
-            body: "Intitulé de la question",
-            choices: [
-              {
-                id: null,
-                name: "1",
-                body: "Réponse A"
-              },
-              {
-                id: null,
-                name: "2",
-                body: "Réponse B"
-              },
-            ]
-          }
-        ]
-      }
-    ]
-  };
-  buildQCMFromData();
+    sections: [ defaultSection() ],
+  });
 }
 
 function buildQCM(txt) {
-  const loaded_data = decipher( JSON.parse(txt) );
-  if (loaded_data) {
-    qcm_data = loaded_data;
-    buildQCMFromData();
-  } else {
-    alert('Mot de passe incorrect ou fichier corrompu');
-  }
+  buildQCMFromData( decipher( JSON.parse(txt) ) );
 }
 
 

@@ -19,12 +19,19 @@ function decipher(o) {
   }
 }
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
 function get(id) { return document.getElementById(id); }
 
-function build(elt, classes) {
+function build(elt, classes, innerText) {
   const res = document.createElement(elt);
   if (classes) {
     res.className = classes.join(' ');
+  }
+  if (innerText) {
+	res.innerText = innerText;
   }
   return res;
 }
@@ -56,4 +63,11 @@ function load_file(file, callback) {
   const reader = new FileReader();
   reader.onload = (e)=>callback(e.target.result);
   reader.readAsText(file);
+}
+
+function typeset(code) {
+  MathJax.startup.promise = MathJax.startup.promise
+    .then(() => MathJax.typesetPromise(code()))
+    .catch((err) => console.log('Typeset failed: ' + err.message));
+  return MathJax.startup.promise;
 }
