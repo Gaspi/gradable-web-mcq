@@ -20,17 +20,29 @@ function decipher(o) {
 }
 
 var formGroupCount=0;
-function buildFormGroup(elt, label) {
+function buildFormGroup(elt, label, tick=false) {
   if (!elt.id) {
     elt.id = 'formGroup'+(++formGroupCount);
   }
   const lbl = build('label',[],label);
   lbl.setAttribute('for', elt.id);
   
-  const res = build('div',['form-group']);
-  res.appendChild(lbl);
-  res.appendChild(elt);
-  return res;
+  if (tick) {
+    const res = build('div',['form-check']);
+    res.appendChild(elt);
+    res.appendChild(lbl);
+    return res;
+  } else {
+    const res = build('div',['form-group']);
+    res.appendChild(lbl);
+    res.appendChild(elt);
+    return res;
+  }
+}
+
+function htmltick(ok) {
+  return (ok ? '<span style="color: green">\u2713</span>' :
+    '<span style="color: red">\u2717</span>');
 }
 
 function getRandomInt(max) {
@@ -45,7 +57,7 @@ function build(elt, classes, innerText) {
     res.className = classes.join(' ');
   }
   if (innerText) {
-	res.innerText = innerText;
+  res.innerText = innerText;
   }
   return res;
 }
@@ -55,22 +67,51 @@ function removeAllChildren(node) {
   return node;
 }
 
-function emptyPage() {
-  return removeAllChildren(get('main-container'));
+
+function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
 }
 
-// Repalce with a class
-function buildCard(show=false) {
-  const card = build('div', ['card','m-3']);
-  const card_header = card.appendChild( build('div', ['card-header']) );
-  const card_body = card.appendChild( build('div',['card-body','collapse']) );
-  if (show) {
-    card_body.classList.toggle('show');
+class Card {
+  constructor() {
+    this.card = build('div', ['card','m-3']);
+    this.header = this.card.appendChild( build('div', ['card-header']) );
+    this.body = this.card.appendChild( build('div',['card-body','collapse']) );
+    const self = this;
+    this.header.addEventListener('click', () => self.toggle());
   }
-  card_header.onclick = function() { card_body.classList.toggle('show'); };
-  return card;
+  
+  toggle(val) {
+    this.body.classList.toggle('show', val);
+  }
+  
+  addTo(container) {
+    this.container = container;
+    container.appendChild(this.card);
+    return this;
+  }
+  
+  remove() {
+    this.container.removeChild(this.card);
+    if (this.onremove instanceof Function) {
+      this.onremove();
+    }
+  }
+  
+  onclose(f) {
+    const body = this.body;
+    f();
+    this.header.addEventListener('click', () => body.classList.contains('show') || f());
+  }
 }
-
 
 // File loading
 function load_file(file, callback) {
