@@ -49,6 +49,8 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
+function getRandomPick(set) { return set[getRandomInt(set.length)]; }
+
 function get(id) { return document.getElementById(id); }
 
 function build(elt, classes, innerText) {
@@ -79,6 +81,8 @@ function makeid(length) {
     }
     return result;
 }
+
+
 
 class Card {
   constructor() {

@@ -1,9 +1,7 @@
 
 // JS resources (backwards for pop loading)
 const js_resources = [
-  { src: "resources/menu.js" },
-  { src: "resources/class.js" },
-  { src: "resources/qcm.js" },
+  { src: "resources/quiz.js" },
   { src: "resources/utils.js" },
   {
     src: "https://polyfill.io/v3/polyfill.min.js?features=es6"
@@ -35,7 +33,7 @@ function load_js_resources() {
     loader.addEventListener("load", load_js_resources);
     document.body.appendChild(loader);
   } else { // Start building page when done with JS resources
-    buildQCM();
+    init();
   }
 }
 
@@ -78,7 +76,7 @@ function main() {
   document.head.appendChild(metaTag);
   
   // Fix title
-  document.title = 'Quizz';
+  document.title = 'Quiz';
   
   // Load CSS then JS resources
   load_css_resources();
