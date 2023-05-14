@@ -2,6 +2,7 @@
 // JS resources (backwards for pop loading)
 const js_resources = [
   { src: "resources/quiz.js" },
+  { src: "resources/save.js" },
   { src: "resources/utils.js" },
   {
     src: "https://polyfill.io/v3/polyfill.min.js?features=es6"

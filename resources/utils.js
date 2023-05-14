@@ -24,16 +24,16 @@ function buildFormGroup(elt, label, tick=false) {
   if (!elt.id) {
     elt.id = 'formGroup'+(++formGroupCount);
   }
-  const lbl = build('label',[],label);
+  const lbl = mk('label',[],label);
   lbl.setAttribute('for', elt.id);
   
   if (tick) {
-    const res = build('div',['form-check']);
+    const res = mk('div',['form-check']);
     res.appendChild(elt);
     res.appendChild(lbl);
     return res;
   } else {
-    const res = build('div',['form-group']);
+    const res = mk('div',['form-group']);
     res.appendChild(lbl);
     res.appendChild(elt);
     return res;
@@ -53,13 +53,11 @@ function getRandomPick(set) { return set[getRandomInt(set.length)]; }
 
 function get(id) { return document.getElementById(id); }
 
-function build(elt, classes, innerText) {
+function mk(elt, classes=[], innerText) {
   const res = document.createElement(elt);
-  if (classes) {
-    res.className = classes.join(' ');
-  }
+  res.classList.add(...classes);
   if (innerText) {
-  res.innerText = innerText;
+    res.innerText = innerText;
   }
   return res;
 }
@@ -72,7 +70,7 @@ function removeAllChildren(node) {
 
 function makeid(length) {
     let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     const charactersLength = characters.length;
     let counter = 0;
     while (counter < length) {
@@ -80,41 +78,6 @@ function makeid(length) {
       counter += 1;
     }
     return result;
-}
-
-
-
-class Card {
-  constructor() {
-    this.card = build('div', ['card','m-3']);
-    this.header = this.card.appendChild( build('div', ['card-header']) );
-    this.body = this.card.appendChild( build('div',['card-body','collapse']) );
-    const self = this;
-    this.header.addEventListener('click', () => self.toggle());
-  }
-  
-  toggle(val) {
-    this.body.classList.toggle('show', val);
-  }
-  
-  addTo(container) {
-    this.container = container;
-    container.appendChild(this.card);
-    return this;
-  }
-  
-  remove() {
-    this.container.removeChild(this.card);
-    if (this.onremove instanceof Function) {
-      this.onremove();
-    }
-  }
-  
-  onclose(f) {
-    const body = this.body;
-    f();
-    this.header.addEventListener('click', () => body.classList.contains('show') || f());
-  }
 }
 
 // File loading

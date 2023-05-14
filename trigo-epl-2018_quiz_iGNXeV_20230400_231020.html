@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+    <script>
+      var data =
+{"code":"iGNXeV","type":"quiz","name":"trigo-epl-2018","title":"Relations trigonométriques","subtitle":"(d’après EPL 2008)","intro":"Ce QCM a été construit à partir de https://www.chercheinfo.com/uploads/1951-c38153b0ae.pdf","pages":[{"code":"OAjwrh","type":"page","title":"Page 1","content":[{"code":"lLgVVg","type":"question","title":"Question 1","body":"Parmi les assertions suivantes, lesquelles sont vraies ?","choices":[{"code":"FzdMBD","type":"answer","correct":false,"body":"\\(\\displaystyle \\forall \\theta \\in \\mathbb{R} : \\cos(5\\theta) = 16\\cos^5(\\theta) + 5\\cos(\\theta) \\)"},{"code":"PKKMxt","type":"answer","correct":true,"body":"\\(\\displaystyle \\forall \\theta \\in \\mathbb{R} : \\cos(5\\theta) = 16\\cos^5(\\theta) -20\\cos^3(\\theta) + 5\\cos(\\theta) \\)"},{"code":"pruImP","type":"answer","correct":true,"body":"\\(\\displaystyle \\cos\\left( \\frac{\\pi}{10} \\right) = \\sqrt{ \\frac{5+\\sqrt{5}}{8} } \\)"},{"code":"tPqOZC","type":"answer","correct":false,"body":"\\(\\displaystyle \\cos\\left( \\frac{\\pi}{10} \\right) = \\sqrt{ \\frac{5-\\sqrt{5}}{8} } \\) car \\(\\displaystyle \\cos\\left( \\frac{\\pi}{10} \\right) \\leq \\cos\\left( \\frac{\\pi}{3} \\right) \\)"}]},{"code":"DQXKNn","type":"question","title":"Question 2","body":"Soit \\(\\displaystyle n \\in \\mathbb{N}^* \\). On cherche à résoudre \\(\\displaystyle \\sum_{k=1}^n \\binom{n}{k} \\cos(2k\\theta)=0 \\) où \\(\\theta\\) est une inconnue réelle.","choices":[{"code":"vdytoJ","type":"answer","correct":false,"body":"Si \\(\\theta\\) est solution alors \\(\\displaystyle  \\sum_{k=1}^n \\binom{n}{k} \\sin^2(k\\theta)=2^n \\)"},{"code":"ujbbdp","type":"answer","correct":false,"body":"\\(\\displaystyle \\sum_{k=1}^n \\binom{n}{k} \\cos(2k\\theta)= \\cos(n\\theta) \\left( \\frac{\\cos(\\theta)}{2} \\right)^n \\)"},{"code":"KaUwVv","type":"answer","correct":false,"body":"L'ensemble des solutions est \\(\\displaystyle \\left\\lbrace \\frac{\\pi}{n}+\\frac{k\\pi}{n} ~,~ k \\in \\mathbb{Z} \\right\\rbrace ~~\\bigcup~~ \\left\\lbrace \\frac{\\pi}{2}+k\\pi ~,~ k \\in \\mathbb{Z} \\right\\rbrace \\)"},{"code":"KBArgl","type":"answer","correct":false,"body":"Il n’y a pas de solution à cette équation."}]},{"code":"Nrhvha","type":"question","title":"Question 3","body":"Soient \\(\\displaystyle U(\\alpha,h) = \\sum_{p=0}^{n-1} \\cos(\\alpha+ph) \\) et \\(\\displaystyle V(\\alpha,h) = \\sum_{p=0}^{n-1} \\sin(\\alpha+ph) \\), avec \\(\\alpha\\) et \\(h\\) réels non multiples de \\(2\\pi\\). On note \\(Z=U+iV\\).","choices":[{"code":"nURCPl","type":"answer","correct":false,"body":"\\(\\displaystyle Z(\\alpha,h) = e^{i\\alpha}\\frac{1-e^{inh}}{1-e^{ih}} \\)"},{"code":"qNautk","type":"answer","correct":true,"body":"\\(\\displaystyle Z(\\alpha,h) = e^{i\\alpha}\\frac{\\sin\\left( \\frac{nh}{2}\\right)}{\\sin\\left( \\frac{h}{2}\\right)} \\)"},{"code":"sQCtsl","type":"answer","correct":false,"body":"\\(\\displaystyle U(\\alpha,h) = V\\left( \\frac{\\pi}{2}-\\alpha,h\\right) \\)"},{"code":"NjLkDc","type":"answer","correct":false,"body":"\\(\\displaystyle U(0,h) = \\frac{\\cos\\left( \\frac{n-1}{2}h\\right)\\sin\\left( \\frac{nh}{2}\\right)}{\\sin\\left( \\frac{h}{2}\\right)} \\)"}]},{"code":"hBAPyQ","type":"question","title":"Question 4","body":"On pose \\(\\displaystyle A(h) = \\sum_{p=1}^{n} \\cos(ph) \\) et \\(\\displaystyle B(h) = \\sum_{p=1}^{n} p\\sin(ph) \\).","choices":[{"code":"MaiOxl","type":"answer","correct":false,"body":"\\( A(h) = U(-h,h) \\)"},{"code":"WiEeZX","type":"answer","correct":true,"body":"\\( A(h) = U(h,h) \\)"},{"code":"ZidCqU","type":"answer","correct":false,"body":"\\(\\displaystyle B(h) = \\frac{\\text{d}A}{\\text{d}h}(h) \\)"},{"code":"UdgZkR","type":"answer","correct":false,"body":"\\(\\displaystyle A(h) = \\frac{\\sin\\left( \\frac{2n+1}{2}h\\right)}{2\\sin\\left( \\frac{h}{2}\\right)} - \\frac{1}{2}\\)"}]}]}]};
+      window.onload = function() {
+        let loader = document.createElement("script");
+        loader.setAttribute("src", "resources/main.js");
+        loader.addEventListener("load", () => { main(); });
+        loader.addEventListener("error", (ev) => {
+          let p = document.createElement("p");
+          p.innerText = "Erreur du chargement: "+ ev;
+          document.body.appendChild(p);
+        });
+        document.body.appendChild(loader);
+      };
+    </script>
+  </body>
+</html>
