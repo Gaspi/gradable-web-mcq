@@ -4,8 +4,8 @@ defaultQuestionBodies = [
   "Calculez \\[ \\sum_{0 \\leq n \\leq +\\infty} \\frac{1}{n^{\\frac{3}{2}}} \\]",
 ]
 defaultAnswers = [
-  "\\( 3.1415 / \\pi \\)",
-  "\\( \\frac{\\sqrt{n}}{2\\pi} \\)",
+  "\\(\\displaystyle 3.1415 / \\pi \\)",
+  "\\(\\displaystyle \\frac{\\sqrt{n}}{2\\pi} \\)",
 ]
 
 function defaultAnswer(correct=false) {
@@ -161,6 +161,32 @@ function buildChoice(choice, question, container) {
   // Commandes plus administratives
   editor.panel.appendChild( mk('hr') );
   
+  const move_up = editor.panel.appendChild(
+    mk('button',['btn','btn-secondary','m-1'], '\u21D1 Remonter le choix') );
+  move_up.target="#";
+  move_up.onclick = function() {
+    if (choice_line.previousElementSibling) {
+      container.insertBefore(choice_line, choice_line.previousElementSibling);
+      const i = question.choices.indexOf(choice);
+      const aux = question.choices[i-1];
+      question.choices[i-1] = choice;
+      question.choices[i] = aux;
+    }
+  };
+  
+  const move_down = editor.panel.appendChild(
+    mk('button',['btn','btn-secondary','m-1'], '\u21D3 Descendre le choix') );
+  move_down.target="#";
+  move_down.onclick = function() {
+    if (choice_line.nextElementSibling) {
+      container.insertBefore(choice_line.nextElementSibling, choice_line);
+      const i = question.choices.indexOf(choice);
+      const aux = question.choices[i+1];
+      question.choices[i+1] = choice;
+      question.choices[i] = aux;
+    }
+  };
+  
   // Delete choice
   const delete_choice = editor.panel.appendChild(
     mk('button',['btn','btn-danger','m-1'], '\u274C Supprimer le choix') );
@@ -215,14 +241,26 @@ function buildParagraph(paragraph, page, container) {
     mk('button',['btn','btn-secondary','m-1'], '\u21D1 Remonter le paragraphe') );
   move_up.target="#";
   move_up.onclick = function() {
-    // Edit page.content and the associated DOM elements
+    if (paragraph_div.previousElementSibling) {
+      container.insertBefore(paragraph_div, paragraph_div.previousElementSibling);
+      const i = page.content.indexOf(paragraph);
+      const aux = page.content[i-1];
+      page.content[i-1] = paragraph;
+      page.content[i] = aux;
+    }
   };
   
   const move_down = editor.panel.appendChild(
     mk('button',['btn','btn-secondary','m-1'], '\u21D3 Descendre le paragraphe') );
   move_down.target="#";
   move_down.onclick = function() {
-    // Edit page.content and the associated DOM elements
+    if (paragraph_div.nextElementSibling) {
+      container.insertBefore(paragraph_div.nextElementSibling, paragraph_div);
+      const i = page.content.indexOf(paragraph);
+      const aux = page.content[i+1];
+      page.content[i+1] = paragraph;
+      page.content[i] = aux;
+    }
   };
   
   // Supprimer le paragraphe
@@ -281,14 +319,26 @@ function buildQuestion(question, page, container) {
     mk('button',['btn','btn-secondary','m-1'], '\u21D1 Remonter la question') );
   move_up.target="#";
   move_up.onclick = function() {
-    // Edit page.content and the associated DOM elements
+    if (question_div.previousElementSibling) {
+      container.insertBefore(question_div, question_div.previousElementSibling);
+      const i = page.content.indexOf(question);
+      const aux = page.content[i-1];
+      page.content[i-1] = question;
+      page.content[i] = aux;
+    }
   };
   
   const move_down = editor.panel.appendChild(
     mk('button',['btn','btn-secondary','m-1'], '\u21D3 Descendre la question') );
   move_down.target="#";
   move_down.onclick = function() {
-    // Edit page.content and the associated DOM elements
+    if (question_div.nextElementSibling) {
+      container.insertBefore(question_div.nextElementSibling, question_div);
+      const i = page.content.indexOf(question);
+      const aux = page.content[i+1];
+      page.content[i+1] = question;
+      page.content[i] = aux;
+    }
   };
   
   // Supprimer la question
@@ -361,18 +411,30 @@ function buildTabPage(page, data, container) {
   // Commandes plus administratives
   editor.panel.appendChild( mk('hr') );
   
-  const move_up = editor.panel.appendChild(
-    mk('button',['btn','btn-secondary','m-1'], '\u21D2 Avancer la page') );
-  move_up.target="#";
-  move_up.onclick = function() {
-    // Edit page.content and the associated DOM elements
-  };
-  
   const move_down = editor.panel.appendChild(
     mk('button',['btn','btn-secondary','m-1'], '\u21D0 Reculer la page') );
   move_down.target="#";
   move_down.onclick = function() {
-    // Edit page.content and the associated DOM elements
+    if (tab_li.previousElementSibling) {
+      page_header.insertBefore(tab_li, tab_li.previousElementSibling);
+      const i = data.pages.indexOf(page);
+      const aux = data.pages[i-1];
+      data.pages[i-1] = page;
+      data.pages[i] = aux;
+    }
+  };
+  
+  const move_up = editor.panel.appendChild(
+    mk('button',['btn','btn-secondary','m-1'], '\u21D2 Avancer la page') );
+  move_up.target="#";
+  move_up.onclick = function() {
+    if (tab_li.nextElementSibling) {
+      page_header.insertBefore(tab_li.nextElementSibling, tab_li);
+      const i = data.pages.indexOf(page);
+      const aux = data.pages[i+1];
+      data.pages[i+1] = page;
+      data.pages[i] = aux;
+    }
   };
   
   // Suppression de la page
@@ -434,7 +496,7 @@ function buildQuiz(data, ignored, container) {
   panel_new_page.onclick = function() {
     const page = defaultPage();
     page.title = "Page " + data.pages.push(page);
-    buildElement(page, data, page_tabs);
+    buildElement(page, data, page_content);
   };
   
   // Commandes interface
@@ -450,17 +512,52 @@ function buildQuiz(data, ignored, container) {
   // Commandes plus administratives
   editor.panel.appendChild( mk('hr') );
   
-  
   // Champ de titre
   const name_input = mk('input',['form-control']);
   name_input.setAttribute('type','text');
   name_input.value = data.name.replace(/[^a-zA-Z0-9\-_]/g,'-');
   editor.panel.appendChild( buildFormGroup(name_input, 'Nom') );
   
+  // Password field
+  const pass_input = mk('input',['form-control']);
+  pass_input.setAttribute('type','text');
+  pass_input.value = '';
+  editor.panel.appendChild( buildFormGroup(pass_input, 'Mot de passe') );
+  
   // Champ de sauvegarde
   const save_btn = editor.panel.appendChild( mk('button',['btn','btn-primary','m-1'], 'Sauvegarder') );
   save_btn.target="#";
   save_btn.onclick = function() {
+    editor.save();
+    const now = new Date();
+    const date = String( now.getFullYear() ).padStart(4,'0')+
+                 String( now.getMonth()    ).padStart(2,'0')+
+                 String( now.getDay()      ).padStart(2,'0');
+    const time = String( now.getHours()    ).padStart(2,'0')+
+                 String( now.getMinutes()  ).padStart(2,'0')+
+                 String( now.getSeconds()  ).padStart(2,'0');
+    save(data, [data.name, data.type, data.code, date, time].join('_'));
+  };
+  
+  // Commandes d'export
+  editor.panel.appendChild( mk('hr') );
+  
+  // Champ de titre
+  const export_name_input = mk('input',['form-control']);
+  export_name_input.setAttribute('type','text');
+  export_name_input.value = '';
+  editor.panel.appendChild( buildFormGroup(name_input, 'Code élève') );
+  
+  // Password field
+  const export_pass_input = mk('input',['form-control']);
+  export_pass_input.setAttribute('type','text');
+  export_pass_input.value = '';
+  editor.panel.appendChild( buildFormGroup(export_pass_input, 'Mot de passe élève') );
+  
+  // Champ d'export
+  const export_btn = editor.panel.appendChild( mk('button',['btn','btn-primary','m-1'], 'Exporter un quiz') );
+  export_btn.target="#";
+  export_btn.onclick = function() {
     editor.save();
     const now = new Date();
     const date = String( now.getFullYear() ).padStart(4,'0')+
