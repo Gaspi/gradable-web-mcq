@@ -73,8 +73,11 @@ function buildPage() {
   side_panel.setAttribute('role','navigation');
   const side_header = side_panel.appendChild( mk('div', ['d-flex','flex-row','align-items-baseline']) );
   side_panel_title = side_header.appendChild( mk('h3',['me-auto']) );
-  side_panel_save = mk('button',['btn','btn-success','float-right'], 'Valider');
-  side_panel_quit = mk('button',['btn','btn-danger','ms-1'], 'Quitter');
+  side_panel_save = mk('button',['btn','btn-success','float-right']);
+  setAlternativeInnerText(side_panel_save, 'Valider', '\u2705');
+  side_panel_quit = mk('button',['btn','btn-danger','ms-1']);
+  setAlternativeInnerText(side_panel_quit, 'Quitter', '\u274C');
+
   side_panel_save.setAttribute('disabled','');
   side_panel_quit.setAttribute('disabled','');
   
@@ -85,11 +88,6 @@ function buildPage() {
   
   main_panel = d2.appendChild( mk('main', ['col','main','h-100','overflow-auto']) );
   return main_panel;
-}
-
-
-function emptyPage() {
-  removeAllChildren(main_panel);
 }
 
 
@@ -106,6 +104,7 @@ class SideEditor {
   }
   
   show() {
+    if (active_panel === this) { return; }
     if (active_panel) { active_panel.hide(); }
     active_panel = this;
     side_panel_title.innerText = this.name;
@@ -147,8 +146,7 @@ function buildChoice(choice, question, container) {
   
   
   // Champ de titre
-  const body_input = mk('textarea',['form-control']);
-  body_input.setAttribute('rows','8');
+  const body_input = mkTextArea();
   body_input.value = choice.body;
   editor.panel.appendChild( buildFormGroup(body_input, 'Corps de la réponse') );
   
@@ -161,8 +159,8 @@ function buildChoice(choice, question, container) {
   // Commandes plus administratives
   editor.panel.appendChild( mk('hr') );
   
-  const move_up = editor.panel.appendChild(
-    mk('button',['btn','btn-secondary','m-1'], '\u21D1 Remonter le choix') );
+  const move_up = editor.panel.appendChild( mk('button',['btn','btn-secondary','m-1']) );
+  setAlternativeInnerText(move_up, 'Remonter le choix', '\u21D1');
   move_up.target="#";
   move_up.onclick = function() {
     if (choice_line.previousElementSibling) {
@@ -174,8 +172,8 @@ function buildChoice(choice, question, container) {
     }
   };
   
-  const move_down = editor.panel.appendChild(
-    mk('button',['btn','btn-secondary','m-1'], '\u21D3 Descendre le choix') );
+  const move_down = editor.panel.appendChild( mk('button',['btn','btn-secondary','m-1']) );
+  setAlternativeInnerText(move_down, 'Descendre le choix', '\u21D3');
   move_down.target="#";
   move_down.onclick = function() {
     if (choice_line.nextElementSibling) {
@@ -188,8 +186,8 @@ function buildChoice(choice, question, container) {
   };
   
   // Delete choice
-  const delete_choice = editor.panel.appendChild(
-    mk('button',['btn','btn-danger','m-1'], '\u274C Supprimer le choix') );
+  const delete_choice = editor.panel.appendChild( mk('button',['btn','btn-danger','m-1']) );
+  setAlternativeInnerText(delete_choice, 'Supprimer le choix', '\u274C');
   delete_choice.target="#";
   delete_choice.onclick = function() {
     question.choices.splice(question.choices.indexOf(choice), 1);
@@ -217,6 +215,7 @@ function buildParagraph(paragraph, page, container) {
   const paragraph_div = container.appendChild( mk('div') );
   const paragraph_title = paragraph_div.appendChild( mk('h3',['mt-4','display-6']) );
   const paragraph_body = paragraph_div.appendChild( mk('p',['lead']) );
+  paragraph_div.appendChild( mk('hr') );
   
   const editor = new SideEditor('Paragraph '+paragraph.code);
   editor.addTrigger(paragraph_title);
@@ -229,16 +228,15 @@ function buildParagraph(paragraph, page, container) {
   editor.panel.appendChild( buildFormGroup(title_input, 'Titre du paragraphe') );
   
   // Champ d'introduction
-  const body_input = mk('textarea',['form-control']);
-  body_input.setAttribute('rows','8');
+  const body_input = mkTextArea();
   body_input.value = paragraph.body;
   editor.panel.appendChild( buildFormGroup(body_input, 'Corps du paragraphe') );
   
   // Commandes plus administratives
   editor.panel.appendChild( mk('hr') );
   
-  const move_up = editor.panel.appendChild(
-    mk('button',['btn','btn-secondary','m-1'], '\u21D1 Remonter le paragraphe') );
+  const move_up = editor.panel.appendChild( mk('button',['btn','btn-secondary','m-1']) );
+  setAlternativeInnerText(move_up, 'Remonter le paragraphe', '\u21D1');
   move_up.target="#";
   move_up.onclick = function() {
     if (paragraph_div.previousElementSibling) {
@@ -250,8 +248,8 @@ function buildParagraph(paragraph, page, container) {
     }
   };
   
-  const move_down = editor.panel.appendChild(
-    mk('button',['btn','btn-secondary','m-1'], '\u21D3 Descendre le paragraphe') );
+  const move_down = editor.panel.appendChild( mk('button',['btn','btn-secondary','m-1']) );
+  setAlternativeInnerText(move_down, 'Descendre le paragraphe', '\u21D3');
   move_down.target="#";
   move_down.onclick = function() {
     if (paragraph_div.nextElementSibling) {
@@ -264,8 +262,8 @@ function buildParagraph(paragraph, page, container) {
   };
   
   // Supprimer le paragraphe
-  const delete_paragraph = editor.panel.appendChild(
-    mk('button',['btn','btn-danger','m-1'], '\u274C Supprimer le paragraphe') );
+  const delete_paragraph = editor.panel.appendChild( mk('button',['btn','btn-danger','m-1']) );
+  setAlternativeInnerText(delete_paragraph, 'Supprimer le paragraphe', '\u274C');
   delete_paragraph.target="#";
   delete_paragraph.onclick = function() {
     page.content.splice(page.content.indexOf(paragraph), 1);
@@ -298,13 +296,13 @@ function buildQuestion(question, page, container) {
   editor.panel.appendChild( buildFormGroup(title_input, 'Titre de la question') );
   
   // Champ d'introduction
-  const body_input = mk('textarea',['form-control']);
-  body_input.setAttribute('rows','8');
+  const body_input = mkTextArea();
   body_input.value = question.body;
   editor.panel.appendChild( buildFormGroup(body_input, 'Corps de la question') );
   
   // Add a new answer
-  const panel_new_choice = editor.panel.appendChild( mk('button',['btn', 'btn-success', 'm-1'], 'Ajouter une nouvelle réponse') );
+  const panel_new_choice = editor.panel.appendChild( mk('button',['btn', 'btn-success', 'm-1']) );
+  setAlternativeInnerText(panel_new_choice, 'Ajouter une nouvelle réponse', '+');
   panel_new_choice.target="#";
   panel_new_choice.onclick = function() {
     const choice = defaultAnswer();
@@ -315,8 +313,8 @@ function buildQuestion(question, page, container) {
   // Commandes plus administratives
   editor.panel.appendChild( mk('hr') );
   
-  const move_up = editor.panel.appendChild(
-    mk('button',['btn','btn-secondary','m-1'], '\u21D1 Remonter la question') );
+  const move_up = editor.panel.appendChild( mk('button',['btn','btn-secondary','m-1']) );
+  setAlternativeInnerText(move_up, 'Remonter la question', '\u21D1');
   move_up.target="#";
   move_up.onclick = function() {
     if (question_div.previousElementSibling) {
@@ -328,8 +326,8 @@ function buildQuestion(question, page, container) {
     }
   };
   
-  const move_down = editor.panel.appendChild(
-    mk('button',['btn','btn-secondary','m-1'], '\u21D3 Descendre la question') );
+  const move_down = editor.panel.appendChild( mk('button',['btn','btn-secondary','m-1']) );
+  setAlternativeInnerText(move_down, 'Descendre la question', '\u21D3');
   move_down.target="#";
   move_down.onclick = function() {
     if (question_div.nextElementSibling) {
@@ -342,8 +340,8 @@ function buildQuestion(question, page, container) {
   };
   
   // Supprimer la question
-  const delete_question = editor.panel.appendChild(
-    mk('button',['btn','btn-danger','m-1'], '\u274C Supprimer la question') );
+  const delete_question = editor.panel.appendChild( mk('button',['btn','btn-danger','m-1']) );
+  setAlternativeInnerText(delete_question, 'Supprimer la question', '\u274C');
   delete_question.target="#";
   delete_question.onclick = function() {
     page.content.splice(page.content.indexOf(question), 1);
@@ -411,8 +409,8 @@ function buildTabPage(page, data, container) {
   // Commandes plus administratives
   editor.panel.appendChild( mk('hr') );
   
-  const move_down = editor.panel.appendChild(
-    mk('button',['btn','btn-secondary','m-1'], '\u21D0 Reculer la page') );
+  const move_down = editor.panel.appendChild( mk('button',['btn','btn-secondary','m-1']) );
+  setAlternativeInnerText(move_down, 'Reculer la page', '\u21D0');
   move_down.target="#";
   move_down.onclick = function() {
     if (tab_li.previousElementSibling) {
@@ -424,8 +422,8 @@ function buildTabPage(page, data, container) {
     }
   };
   
-  const move_up = editor.panel.appendChild(
-    mk('button',['btn','btn-secondary','m-1'], '\u21D2 Avancer la page') );
+  const move_up = editor.panel.appendChild( mk('button',['btn','btn-secondary','m-1']) );
+  setAlternativeInnerText(move_up, 'Avancer la page', '\u21D2');
   move_up.target="#";
   move_up.onclick = function() {
     if (tab_li.nextElementSibling) {
@@ -438,8 +436,8 @@ function buildTabPage(page, data, container) {
   };
   
   // Suppression de la page
-  const delete_page = editor.panel.appendChild(
-    mk('button',['btn','btn-danger','m-1'], '\u274C Supprimer la page') );
+  const delete_page = editor.panel.appendChild( mk('button',['btn','btn-danger','m-1']) );
+  setAlternativeInnerText(delete_page, 'Supprimer la page', '\u274C');
   delete_page.target="#";
   delete_page.onclick = function() {
     data.pages.splice(data.pages.indexOf(page), 1);
@@ -472,26 +470,31 @@ function buildQuiz(data, ignored, container) {
   const editor = new SideEditor('Quiz '+data.code);
   editor.addTrigger(quiz_header);
   
+  const header_form = editor.panel.appendChild( mk('div') );
+  editor.panel.appendChild( mk('hr') );
+  const config_form = editor.panel.appendChild( mk('div') );
+  editor.panel.appendChild( mk('hr') );
+  
   // Champ de titre
   const title_input = mk('input',['form-control']);
   title_input.setAttribute('type','text');
   title_input.value = data.title;
-  editor.panel.appendChild( buildFormGroup(title_input, 'Titre') );
+  header_form.appendChild( buildFormGroup(title_input, 'Titre') );
   
   // Champ de sous-titre
   const subtitle_input = mk('input',['form-control']);
   subtitle_input.setAttribute('type','text');
   subtitle_input.value = data.subtitle;
-  editor.panel.appendChild( buildFormGroup(subtitle_input, 'Sous-titre') );
+  header_form.appendChild( buildFormGroup(subtitle_input, 'Sous-titre') );
   
   // Champ d'introduction
-  const intro_input = mk('textarea',['form-control']);
-  intro_input.setAttribute('rows','6');
+  const intro_input = mkTextArea();
   intro_input.value = data.intro;
-  editor.panel.appendChild( buildFormGroup(intro_input, 'Introduction') );
+  header_form.appendChild( buildFormGroup(intro_input, 'Introduction') );
   
   // Ajouter une nouvelle page
-  const panel_new_page = editor.panel.appendChild( mk('button',['btn','btn-success', 'm-1'], 'Ajouter une nouvelle page') );
+  const panel_new_page = header_form.appendChild( mk('button',['btn','btn-success', 'm-1']) );
+  setAlternativeInnerText(panel_new_page, 'Ajouter une nouvelle page', '+');
   panel_new_page.target="#";
   panel_new_page.onclick = function() {
     const page = defaultPage();
@@ -500,17 +503,32 @@ function buildQuiz(data, ignored, container) {
   };
   
   // Commandes interface
-  editor.panel.appendChild( mk('hr') );
   
-  const smaller = editor.panel.appendChild( mk('button',['btn','btn-secondary', 'm-1'], '\u21D0 Réduire') );
-  smaller.target="#";
-  smaller.onclick = shrinkPanel;
-  const larger = editor.panel.appendChild( mk('button',['btn','btn-secondary', 'm-1'], '\u21D2 Elargir') );
-  larger.target="#";
-  larger.onclick = enlargePanel;
+  const shrink_panel = config_form.appendChild( mk('button',['btn','btn-secondary', 'm-1']) );
+  setAlternativeInnerText(shrink_panel, 'Réduire', '\u21D0');
+  shrink_panel.target="#";
+  shrink_panel.onclick = shrinkPanel;
+  const expand_panel = config_form.appendChild( mk('button',['btn','btn-secondary', 'm-1']) );
+  setAlternativeInnerText(expand_panel, 'Elargir', '\u21D2');
+  expand_panel.target="#";
+  expand_panel.onclick = enlargePanel;
+  
+  const shorter_editor = config_form.appendChild( mk('button',['btn','btn-secondary', 'm-1']) );
+  setAlternativeInnerText(shorter_editor, 'Raccourcir éditeur', '\u21D1');
+  shorter_editor.target="#";
+  shorter_editor.onclick = () => reduceEditorSize();
+  const longer_editor = config_form.appendChild( mk('button',['btn','btn-secondary', 'm-1']) );
+  setAlternativeInnerText(longer_editor, 'Etendre éditeur', '\u21D3');
+  longer_editor.target="#";
+  longer_editor.onclick = () => extendEditorSize();
+  
+  // Symbol buttons
+  const symbol_interface_tick = mk('input',['form-check-input']);
+  symbol_interface_tick.setAttribute('type','checkbox');
+  symbol_interface_tick.addEventListener('change', function() { setAlternative(symbol_interface_tick.checked); } );
+  config_form.appendChild( buildFormGroup(symbol_interface_tick, 'Interface symboliques', tick=true) );
   
   // Commandes plus administratives
-  editor.panel.appendChild( mk('hr') );
   
   // Champ de titre
   const name_input = mk('input',['form-control']);
@@ -528,7 +546,6 @@ function buildQuiz(data, ignored, container) {
   const save_btn = editor.panel.appendChild( mk('button',['btn','btn-primary','m-1'], 'Sauvegarder') );
   save_btn.target="#";
   save_btn.onclick = function() {
-    editor.save();
     const now = new Date();
     const date = String( now.getFullYear() ).padStart(4,'0')+
                  String( now.getMonth()    ).padStart(2,'0')+
@@ -536,7 +553,9 @@ function buildQuiz(data, ignored, container) {
     const time = String( now.getHours()    ).padStart(2,'0')+
                  String( now.getMinutes()  ).padStart(2,'0')+
                  String( now.getSeconds()  ).padStart(2,'0');
-    save(data, [data.name, data.type, data.code, date, time].join('_'));
+    filename = [data.name, data.type, data.code, date, time].join('_');
+    editor.save();
+    save( pass_input.value ? cipher(data, 'prof', pass_input.value) : data, filename);
   };
   
   // Commandes d'export
@@ -546,7 +565,7 @@ function buildQuiz(data, ignored, container) {
   const export_name_input = mk('input',['form-control']);
   export_name_input.setAttribute('type','text');
   export_name_input.value = '';
-  editor.panel.appendChild( buildFormGroup(name_input, 'Code élève') );
+  editor.panel.appendChild( buildFormGroup(export_name_input, 'Code élève') );
   
   // Password field
   const export_pass_input = mk('input',['form-control']);

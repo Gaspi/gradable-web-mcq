@@ -48,6 +48,6 @@ function download_text(text, filename) {
   }, 0);
 }
 
-function save(data, filename) {
-  download_text(prefix+JSON.stringify(data)+postfix, filename+".html");
+function save(o, filename) {
+  download_text(prefix+JSON.stringify(o)+postfix, filename+".html");
 }

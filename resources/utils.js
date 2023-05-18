@@ -1,22 +1,26 @@
 
-
 function decipher(o) {
   if (!o.lock) { return o; }
   const password = prompt("Mot de passe ["+o.lock+"] requis :");
-  const deciphered = CryptoJS.AES.decrypt(o.payload, password).toString(CryptoJS.enc.Utf8);
-  let parsed_data = null;
   try {
-     parsed_data = JSON.parse(deciphered);
+    const parsed_data = JSON.parse( CryptoJS.AES.decrypt(o.payload, password).toString(CryptoJS.enc.Utf8) );
+    if (parsed_data) {
+      return decipher(parsed_data);
+    } else {
+      alert('Mot de passe incorrect ou fichier corrompu');
+      return null;
+    }
   } catch(e) {
     alert('Mot de passe incorrect ou fichier corrompu');
     return null;
   }
-  if (parsed_data) {
-    return decipher(parsed_data);
-  } else {
-    alert('Mot de passe incorrect ou fichier corrompu');
-    return null;
-  }
+}
+
+function cipher(o, user, password) {
+  return {
+    lock: user,
+    payload: CryptoJS.AES.encrypt(JSON.stringify(o), password)+""
+  };
 }
 
 var formGroupCount=0;
@@ -94,3 +98,55 @@ function typeset(code) {
     .catch((err) => console.log('Typeset failed: ' + err.message));
   return MathJax.startup.promise;
 }
+
+
+// Text areas
+
+const resizableAreas = [];
+var resizableAreasSize = 10;
+
+function mkTextArea() {
+  const elt = mk('textarea',['form-control']);
+  elt.setAttribute('rows',resizableAreasSize);
+  resizableAreas.push(elt);
+  return elt;
+}
+function setTextAreaSize(size) {
+  if (size != resizableAreasSize) {
+    resizableAreasSize = size;
+    resizableAreas.forEach(function (e) {
+      e.setAttribute('rows',resizableAreasSize);
+    })
+  }
+}
+function extendEditorSize() {
+  if (resizableAreasSize < 30) {
+    setTextAreaSize(resizableAreasSize+1);
+  }
+}
+function reduceEditorSize() {
+  if (resizableAreasSize > 3) {
+    setTextAreaSize(resizableAreasSize-1);
+  }
+}
+
+
+// Elements (usually button) with alternative (usually shorter) text (usually a symbol)
+
+const eltWithAlternative = [];
+var alterantiveOn = false;
+
+function setAlternativeInnerText(elt, txt, alt) {
+  eltWithAlternative.push( [elt, txt, alt] );
+  elt.innerText = alterantiveOn ? alt : txt;
+}
+
+function setAlternative(alt) {
+  if (alt != alterantiveOn) {
+    alterantiveOn = alt;
+    eltWithAlternative.forEach(function (e) {
+      e[0].innerText = alterantiveOn ? e[2] : e[1];
+    });
+  }
+}
+
