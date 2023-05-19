@@ -1,11 +1,10 @@
 
 defaultQuestionBodies = [
-  "Calculez \\[ \\int_1^{+\\infty} \\frac{\\ln(x)}{x^2}\\text{d}x \\]",
-  "Calculez \\[ \\sum_{0 \\leq n \\leq +\\infty} \\frac{1}{n^{\\frac{3}{2}}} \\]",
+  "Exemple de question avec un peu de math \\(n \\in \\mathbb{N} \\) puis une grosse equation \\[ \\sum_{k=1}^{n} \\binom{n}{k} \\left( \\int_1^{+\\infty} \\frac{\\ln(x)\\cos(2k\\pi + \\phi\\cdot\\theta)}{ \\sqrt{u_k x^2} }\\text{d}x \\right)^k \\] et encore un peu de texte.",
 ]
 defaultAnswers = [
-  "\\(\\displaystyle 3.1415 / \\pi \\)",
-  "\\(\\displaystyle \\frac{\\sqrt{n}}{2\\pi} \\)",
+  "Exemple de solution: \\(\\displaystyle x^2 \\in \\left\\{ \\sqrt{\\theta}+ 2k\\pi ~,~ k \\in \\mathbb{N} \\right\\} \\).",
+  "Exemple de solution: \\(\\displaystyle \\frac{\\sqrt{n}}{2\\pi} \\).",
 ]
 
 function defaultAnswer(correct=false) {
@@ -534,13 +533,13 @@ function buildQuiz(data, ignored, container) {
   const name_input = mk('input',['form-control']);
   name_input.setAttribute('type','text');
   name_input.value = data.name.replace(/[^a-zA-Z0-9\-_]/g,'-');
-  editor.panel.appendChild( buildFormGroup(name_input, 'Nom') );
+  editor.panel.appendChild( buildFormGroup(name_input, 'Nom du quiz') );
   
   // Password field
   const pass_input = mk('input',['form-control']);
   pass_input.setAttribute('type','text');
   pass_input.value = '';
-  editor.panel.appendChild( buildFormGroup(pass_input, 'Mot de passe') );
+  editor.panel.appendChild( buildFormGroup(pass_input, 'Mot de passe professeur') );
   
   // Champ de sauvegarde
   const save_btn = editor.panel.appendChild( mk('button',['btn','btn-primary','m-1'], 'Sauvegarder') );
@@ -565,28 +564,66 @@ function buildQuiz(data, ignored, container) {
   const export_name_input = mk('input',['form-control']);
   export_name_input.setAttribute('type','text');
   export_name_input.value = '';
-  editor.panel.appendChild( buildFormGroup(export_name_input, 'Code élève') );
+  editor.panel.appendChild( buildFormGroup(export_name_input, 'Identifiant élève') );
   
-  // Password field
+  // Student password
   const export_pass_input = mk('input',['form-control']);
   export_pass_input.setAttribute('type','text');
   export_pass_input.value = '';
   editor.panel.appendChild( buildFormGroup(export_pass_input, 'Mot de passe élève') );
+  
+  // Symbol buttons
+  const include_correction_tick = mk('input',['form-check-input']);
+  include_correction_tick.setAttribute('type','checkbox');
+  editor.panel.appendChild( buildFormGroup(include_correction_tick, 'Inclure une correction', tick=true) );
+  
+  // Correction password
+  const correction_pass_input = mk('input',['form-control']);
+  correction_pass_input.setAttribute('type','text');
+  correction_pass_input.value = '';
+  correction_pass_input.setAttribute('disabled','');
+  editor.panel.appendChild( buildFormGroup(correction_pass_input, 'Mot de passe corrigé') );
+  
+  include_correction_tick.addEventListener('change', function() {
+    if (include_correction_tick.checked) {
+      correction_pass_input.removeAttribute('disabled');
+    } else {
+      correction_pass_input.value = '';
+      correction_pass_input.setAttribute('disabled','');
+    }
+  } );
   
   // Champ d'export
   const export_btn = editor.panel.appendChild( mk('button',['btn','btn-primary','m-1'], 'Exporter un quiz') );
   export_btn.target="#";
   export_btn.onclick = function() {
     editor.save();
-    const now = new Date();
-    const date = String( now.getFullYear() ).padStart(4,'0')+
-                 String( now.getMonth()    ).padStart(2,'0')+
-                 String( now.getDay()      ).padStart(2,'0');
-    const time = String( now.getHours()    ).padStart(2,'0')+
-                 String( now.getMinutes()  ).padStart(2,'0')+
-                 String( now.getSeconds()  ).padStart(2,'0');
-    save(data, [data.name, data.type, data.code, date, time].join('_'));
+    // TODO
   };
+  
+  
+  // Commandes d'exports multiples
+  editor.panel.appendChild( mk('hr') );
+  
+  const multiple_export_btn = editor.panel.appendChild( mk('button',['btn','btn-primary','m-1'], 'Exporter plusieurs quiz') );
+  multiple_export_btn.target="#";
+  multiple_export_btn.onclick = function() {
+    editor.save();
+    // TODO
+  };
+  
+  
+  
+  // Commandes de vérification
+  editor.panel.appendChild( mk('hr') );
+  
+  const check_answer_btn = editor.panel.appendChild( mk('button',['btn','btn-primary','m-1'], 'Vérifier une réponse au quiz') );
+  check_answer_btn.target="#";
+  check_answer_btn.onclick = function() {
+    editor.save();
+    // TODO
+  };
+  
   
   // Refresh on close
   editor.action(function() {
