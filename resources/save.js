@@ -1,5 +1,4 @@
 
-
 const prefix = `
 <!DOCTYPE html>
 <html lang="fr">
@@ -11,10 +10,11 @@ const prefix = `
       var data =
 `;
 
-const postfix = `;
+function postfix(loader_name) {
+  return `
       window.onload = function() {
         let loader = document.createElement("script");
-        loader.setAttribute("src", "resources/main.js");
+        loader.setAttribute("src", "resources/${loader_name}.js");
         loader.addEventListener("load", () => { main(); });
         loader.addEventListener("error", (ev) => {
           let p = document.createElement("p");
@@ -26,7 +26,8 @@ const postfix = `;
     </script>
   </body>
 </html>
-`
+  `;
+}
 
 // Custom text downloading as file
 function download_text(text, filename) {
@@ -48,6 +49,10 @@ function download_text(text, filename) {
   }, 0);
 }
 
-function save(o, filename) {
-  download_text(prefix+JSON.stringify(o)+postfix, filename+".html");
+function save_editor(o, filename) {
+  download_text(prefix+JSON.stringify(o)+postfix("quiz-editor"), filename+".html");
+}
+
+function save_exporter(o, filename) {
+  download_text(prefix+JSON.stringify(o)+postfix("quiz-exporter"), filename+".html");
 }

@@ -1,7 +1,7 @@
 
-// JS resources (backwards for pop loading)
+// JS resources (backwards for pop-loading)
 const js_resources = [
-  { src: "resources/quiz.js" },
+  { src: "resources/editor.js" },
   { src: "resources/save.js" },
   { src: "resources/utils.js" },
   {

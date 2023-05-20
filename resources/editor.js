@@ -554,7 +554,7 @@ function buildQuiz(data, ignored, container) {
                  String( now.getSeconds()  ).padStart(2,'0');
     filename = [data.name, data.type, data.code, date, time].join('_');
     editor.save();
-    save( pass_input.value ? cipher(data, 'prof', pass_input.value) : data, filename);
+    save_editor( pass_input.value ? cipher(data, 'prof', pass_input.value) : data, filename);
   };
   
   // Commandes d'export
