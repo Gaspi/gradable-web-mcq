@@ -659,3 +659,13 @@ function init() {
   if (!data) { return; }
   buildElement(data, null, main_panel);
 }
+
+
+//TODO
+// Copier vers le presse-papier
+// Importer depuis le presse-papier
+// Lecture permissive de data (get + valeur par défaut)
+// Configuration d'éditeur sauvegardée
+// Déplacer les boutons d'export vers le quiz-exporter
+
+

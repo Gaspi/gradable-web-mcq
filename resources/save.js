@@ -1,17 +1,16 @@
 
-const prefix = `
-<!DOCTYPE html>
+const prefix = `<!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="utf-8"/>
   </head>
   <body>
     <script>
-      var data =
-`;
+      var data =`;
 
-function postfix(loader_name) {
-  return `
+      
+function old_postfix(loader_name) {
+  return `;
       window.onload = function() {
         let loader = document.createElement("script");
         loader.setAttribute("src", "resources/${loader_name}.js");
@@ -27,6 +26,14 @@ function postfix(loader_name) {
   </body>
 </html>
   `;
+}
+
+function postfix(loader_name) {
+  return `;
+    </script>
+    <script src="resources/${loader_name}.js"></script>
+  </body>
+</html>`;
 }
 
 // Custom text downloading as file
